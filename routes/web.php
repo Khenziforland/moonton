@@ -23,17 +23,16 @@ Route::prefix('prototype')->name('prototype.')->group(function () {
     })->name('register');
 
     route::get('/dashboard', function () {
-        // return Inertia::render('Prototype/Dashboard');
-        return "Hello Dashboard";
+        return Inertia::render('Prototype/Dashboard');
     })->name('dashboard');
 
-    route::get('/subscriptionPlan', function () {
-        return Inertia::render('Prototype/SubscriptionPlan');
-    })->name('subscriptionPlan');
+    // route::get('/subscriptionPlan', function () {
+    //     return Inertia::render('Prototype/SubscriptionPlan');
+    // })->name('subscriptionPlan');
 
-    route::get('/movie/{slug}', function () {
-        return Inertia::render('Prototype/Movie/Show');
-    })->name('movie.show');
+    // route::get('/movie/{slug}', function () {
+    //     return Inertia::render('Prototype/Movie/Show');
+    // })->name('movie.show');
 });
 
 
