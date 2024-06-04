@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->unsignedInteger('price');
-            $table->unsignedSmallInteger('active_period_in_months');
+            $table->smallInteger('active_period_in_months');
             $table->json('features');
-            $table->softDeletes();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
