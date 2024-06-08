@@ -14,20 +14,9 @@ class MovieService
      * @param  $request
      * @return ArrayObject
      */
-    public function index($request)
+    public function index()
     {
-        $page = 1;
-        $limit = 5;
-
-        if ($request->page) {
-            $page = $request->page;
-        }
-
-        if ($request->limit) {
-            $limit = $request->limit;
-        }
-
-        $kelas = Kelas::getPaginatedData(true, $page, $limit, 'nama', 'asc');
+        $movies = Movie::withTrashed()->orderBy('deleted_at')->get();
 
         $status = true;
         $message = 'Data berhasil diambil !';
@@ -35,7 +24,7 @@ class MovieService
         $result = (object) [
             'status' => $status,
             'message' => $message,
-            'kelas' => $kelas,
+            'movies' => $movies,
         ];
 
         return $result;
@@ -80,6 +69,10 @@ class MovieService
             'is_featured' => $request->is_featured,
         ];
 
+        if ($request->is_featured == "false") {
+            $data['is_featured'] = 0;
+        }
+
         $data['thumbnail'] = Storage::disk('public')->put('movies', $request->file('thumbnail'));
 
         $movie = Movie::create($data);
@@ -104,29 +97,37 @@ class MovieService
      */
     public function update($request)
     {
+        $movie = Movie::firstWhere('id', $request->id);
+
         $data = [
-            'nama' => $request->nama,
-            'harga' => $request->harga,
-            'max_kapasitas' => $request->max_kapasitas,
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+            'category' => $request->category,
+            'video_url' => $request->video_url,
+            'rating' => $request->rating,
+            'is_featured' => $request->is_featured,
         ];
 
-        $kelas = Kelas::where('id', $request->id)
-            ->update($data);
-
-        if ($request->pamflet) {
-            Kelas::deletePamflet($request->id);
-            Kelas::savePamflet($request->id, $request->pamflet);
+        if ($request->is_featured == "false") {
+            $data['is_featured'] = 0;
         }
 
-        $kelas = Kelas::firstWhere('id', $request->id);
+        if ($request->file('thumbnail')) {
+            $data['thumbnail'] = Storage::disk('public')->put('movies', $request->file('thumbnail'));
+            Storage::disk('public')->delete($movie->thumbnail);
+        } else {
+            $data['thumbnail'] = $movie->thumbnail;
+        }
+
+        $movie = Movie::where('id', $request->id)
+            ->update($data);
 
         $status = true;
-        $message = 'Data berhasil disimpan !';
+        $message = 'Data berhasil diupdate !';
 
         $result = (object) [
             'status' => $status,
             'message' => $message,
-            'kelas' => $kelas,
         ];
 
         return $result;
@@ -140,12 +141,31 @@ class MovieService
      */
     public function destroy($request)
     {
-        Kelas::deletePamflet($request->id);
-        Kelas::where('id', $request->id)
-            ->delete();
+        $request->delete();
 
         $status = true;
-        $message = 'Data berhasil dihapus !';
+        $message = 'Movie deleted successfully !';
+
+        $result = (object) [
+            'status' => $status,
+            'message' => $message,
+        ];
+
+        return $result;
+    }
+
+    /**
+     * Restore service.
+     *
+     * @param  $request
+     * @return ArrayObject
+     */
+    public function restore($id)
+    {
+        Movie::withTrashed()->find($id)->restore();
+
+        $status = true;
+        $message = 'Movie restored successfully !';
 
         $result = (object) [
             'status' => $status,

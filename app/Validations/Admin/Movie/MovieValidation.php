@@ -2,6 +2,8 @@
 
 namespace App\Validations\Admin\Movie;
 
+use App\Models\Movie;
+
 class MovieValidation
 {
     /**
@@ -49,7 +51,7 @@ class MovieValidation
             'video_url' => ['required', 'url'],
             'thumbnail' => ['required', 'image'],
             'rating' => ['required', 'numeric', 'min:0', 'max:5'],
-            'is_featured' => ['nullable', 'boolean'],
+            'is_featured' => ['nullable'],
         ];
 
         $message = [
@@ -71,6 +73,7 @@ class MovieValidation
         ];
 
         $request->validate($validation, $message);
+        
 
         $status = true;
         $message = 'Data berhasil divalidasi !';
@@ -89,27 +92,35 @@ class MovieValidation
      * @param  $request
      * @return ArrayObject
      */
-    public function update($request)
+    public function update($request, $id)
     {
         $validation = [
-            'id' => ['required', 'numeric', 'exists:kelas,id'],
-            'nama' => ['required'],
-            'harga' => ['required', 'numeric'],
-            'max_kapasitas' => ['required', 'numeric'],
+            'name' => ['required', 'unique:movies,name,' . $id],
+            'category' => ['required'],
+            'video_url' => ['required', 'url'],
+            'thumbnail' => ['nullable', 'image'],
+            'rating' => ['required', 'numeric', 'min:0', 'max:5'],
+            'is_featured' => ['nullable'],
         ];
 
+        
+
         $message = [
-            'id.required' => 'ID kelas tidak boleh kosong !',
-            'id.numeric' => 'ID kelas harus angka !',
-            'id.exists' => 'ID kelas tidak ditemukan !',
+            'name.required' => 'Nama Movie tidak boleh kosong !',
+            'unique.required' => 'Nama Movie sudah dipakai !',
 
-            'nama.required' => 'Nama kelas tidak boleh kosong !',
+            'category.required' => 'Category movie tidak boleh kosong !',
 
-            'harga.required' => 'Harga kelas tidak boleh kosong !',
-            'harga.numeric' => 'Harga kelas harus berupa angka !',
+            'video_url.required' => 'Video URL Movie tidak boleh kosong !',
+            'video_url.url' => 'Video URL Movie harus berupa url !',
 
-            'max_kapasitas.required' => 'Kapasitas maksimal kelas tidak boleh kosong !',
-            'max_kapasitas.numeric' => 'Kapasitas maksimal kelas harus berupa angka !',
+            'thumbnail.required' => 'Thumbnail Movie tidak boleh kosong !',
+            'thumbnail.image' => 'Thumbnail Movie harus berupa image !',
+
+            'rating.required' => 'Rating Movie tidak boleh kosong !',
+            'rating.numeric' => 'Rating Movie harus berupa angka !',
+            'rating.min' => 'Rating Movie tidak boleh kurang dari 0 !',
+            'rating.max' => 'Rating Movie tidak boleh melebihi 5 !',
         ];
 
         $request->validate($validation, $message);

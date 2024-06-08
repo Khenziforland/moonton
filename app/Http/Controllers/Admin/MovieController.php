@@ -38,17 +38,25 @@ class MovieController extends Controller
         $this->movieValidation = $movieValidation;
         $this->movieService = $movieService;
     }
-    
+
     /**
-     * Display a listing of the resource.
+     * Index.
+     *
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        return inertia('Admin/Movie/Index');
+        $result = $this->movieService->index();
+
+        return inertia('Admin/Movie/Index', [
+            'movies' => $result->movies,
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Create.
+     *
+     * @return \Illuminate\Http\Response
      */
     public function create()
     {
@@ -57,7 +65,10 @@ class MovieController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store.
+     *
+     * @param  \App\Http\Requests\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -86,19 +97,29 @@ class MovieController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Show.
+     *
+     * @param  \App\Http\Requests\Request  $request
+     * @return \Illuminate\Http\Response
      */
-    public function show(string $id)
+    public function show(Request $request)
     {
         //
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Edit.
+     *
+     * @param  \App\Http\Requests\Request  $request
+     * @return \Illuminate\Http\Response
      */
-    public function edit(string $id)
+    public function edit(Movie $movie)
     {
-        //
+        // $result = $this->movieService->edit($request);
+
+        return inertia('Admin/Movie/Edit', [
+            'movie' => $movie
+        ]);
     }
 
     /**
@@ -106,14 +127,52 @@ class MovieController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validation = $this->movieValidation->update($request, $id);
+
+        if ($validation->status == false) {
+            return redirect(route('admin.dashboard.movie.edit'))->with([
+                'message' => "Data Gagal Divalidasi",
+                'type' => "danger"
+            ]);
+        }
+
+        $result = $this->movieService->update($request);
+
+        if ($result->status == false) {
+            return redirect(route('admin.dashboard.movie.edit'))->with([
+                'message' => "Movie Update Failed",
+                'type' => "danger"
+            ]);
+        }
+
+        return redirect(route('admin.dashboard.movie.index'))->with([
+            'message' => "Movie Update successfully",
+            'type' => "success"
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Movie $movie)
     {
-        //
+        $result = $this->movieService->destroy($movie);
+        return redirect(route('admin.dashboard.movie.index'))->with([
+            'message' => $result->message,
+            'type' => 'success',
+        ]);
+        return $movie;
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function restore($id)
+    {
+        $result = $this->movieService->restore($id);
+        return redirect(route('admin.dashboard.movie.index'))->with([
+            'message' => $result->message,
+            'type' => 'success',
+        ]);
     }
 }
