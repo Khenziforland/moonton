@@ -1,7 +1,7 @@
 import Authenticated from "@/Layouts/Authenticated/index"
 import PrimaryButton from "@/Components/PrimaryButton"
 import FlashMessage from "@/Components/FlashMessage"
-import { Head, Link, useForm } from "@inertiajs/react"
+import { Head, Link, useForm } from "@inertiajs/inertia-react"
 
 export default function Index({auth, flashMessage, movies}) {
   const {delete:destroy, put} = useForm();

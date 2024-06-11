@@ -1,5 +1,5 @@
 import ReactPlayer from "react-player"
-import { Link } from "@inertiajs/react"
+import { Link } from "@inertiajs/inertia-react"
 
 export default function Show() {
   return <>

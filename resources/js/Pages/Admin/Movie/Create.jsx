@@ -4,7 +4,7 @@ import Checkbox from "@/Components/Checkbox"
 import TextInput from "@/Components/TextInput"
 import InputLabel from "@/Components/InputLabel"
 import InputError from "@/Components/InputError"
-import { Head, Link, useForm } from "@inertiajs/react"
+import { Head, Link, useForm } from "@inertiajs/inertia-react"
 
 export default function Create({auth}) {
   const { setData, post, processing, errors } = useForm({

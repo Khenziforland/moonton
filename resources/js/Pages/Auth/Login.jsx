@@ -3,7 +3,7 @@ import InputLabel from '@/Components/InputLabel'
 import TextInput from '@/Components/TextInput'
 import PrimaryButton from "@/Components/PrimaryButton";
 import InputError from '@/Components/InputError';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/inertia-react';
 
 export default function Login() {
     const { data, setData, post, processing, errors, reset } = useForm({

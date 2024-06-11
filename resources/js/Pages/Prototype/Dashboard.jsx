@@ -1,5 +1,5 @@
 import Flickity from "react-flickity-component"
-import { Head } from "@inertiajs/react"
+import { Head } from "@inertiajs/inertia-react"
 import Authenticated from "@/Layouts/Authenticated/index"
 import FeaturedMovie from "@/Components/FeaturedMovie"
 import MovieCard from "@/Components/MovieCard"
